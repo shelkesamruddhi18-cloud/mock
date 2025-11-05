@@ -1,0 +1,164 @@
+#include <iostream>
+using namespace std;
+
+#define TABLE_SIZE 5
+
+// ---------------------- COMMON FUNCTIONS ----------------------
+
+int hashFunction(string username) {
+    int sum = 0;
+    for (char c : username)
+        sum += c;                   // ASCII value add केली जाते
+    return sum % TABLE_SIZE;        // Index range मध्ये आणण्यासाठी
+}
+
+string hashPassword(string password) {
+    string hashed = "";
+    for (char c : password)
+        hashed += to_string((int)c % 10); // Each char चा ASCII % 10 करून जोडला
+    return hashed;
+}
+
+// ---------------------- CHAINING METHOD ----------------------
+
+struct Node {
+    string username;
+    string hashedPassword;
+    Node* next;
+};
+
+class HashTableChaining {
+    Node* table[TABLE_SIZE];
+
+public:
+    HashTableChaining() {
+        for (int i = 0; i < TABLE_SIZE; i++)
+            table[i] = NULL;
+    }
+
+    void insert(string username, string password) {
+        int index = hashFunction(username);
+        string hashedPass = hashPassword(password);
+
+        Node* newNode = new Node{username, hashedPass, NULL};
+
+        if (table[index] == NULL) {
+            table[index] = newNode;
+            cout << "✅ Inserted directly at index " << index << endl;
+        } else {
+            Node* temp = table[index];
+            while (temp->next != NULL)
+                temp = temp->next;
+            temp->next = newNode;
+            cout << "⚠ Collision resolved by CHAINING at index " << index << endl;
+        }
+    }
+
+    void display() {
+        cout << "\n--- Hash Table (Chaining) ---\n";
+        for (int i = 0; i < TABLE_SIZE; i++) {
+            cout << "Index " << i << ": ";
+            Node* temp = table[i];
+            if (!temp)
+                cout << "Empty";
+            while (temp) {
+                cout << "[" << temp->username << " : " << temp->hashedPassword << "] -> ";
+                temp = temp->next;
+            }
+            cout << "NULL\n";
+        }
+    }
+};
+
+// ---------------------- OPEN ADDRESSING METHOD ----------------------
+
+class HashTableOpenAddressing {
+    string user[TABLE_SIZE];
+    string pass[TABLE_SIZE];
+    bool used[TABLE_SIZE];
+
+public:
+    HashTableOpenAddressing() {
+        for (int i = 0; i < TABLE_SIZE; i++)
+            used[i] = false;
+    }
+
+    void insert(string username, string password) {
+        int idx = hashFunction(username);
+        int start = idx;
+        string hashedPass = hashPassword(password);
+
+        // जर जागा वापरलेली असेल → पुढची तपासा
+        while (used[idx]) {
+            idx = (idx + 1) % TABLE_SIZE;
+            if (idx == start) {
+                cout << "⚠ Table full, cannot insert!\n";
+                return;
+            }
+        }
+
+        user[idx] = username;
+        pass[idx] = hashedPass;
+        used[idx] = true;
+        cout << "✅ Inserted successfully at index " << idx << endl;
+    }
+
+    void display() {
+        cout << "\n--- Hash Table (Open Addressing) ---\n";
+        for (int i = 0; i < TABLE_SIZE; i++) {
+            cout << "Index " << i << ": ";
+            if (used[i])
+                cout << "[" << user[i] << " : " << pass[i] << "]";
+            else
+                cout << "Empty";
+            cout << "\n";
+        }
+    }
+};
+
+// ---------------------- MAIN FUNCTION ----------------------
+
+int main() {
+    int choice;
+    cout << "--------------------------\n";
+    cout << "HASHING TECHNIQUES DEMO\n";
+    cout << "--------------------------\n";
+    cout << "1. Chaining\n";
+    cout << "2. Open Addressing (Linear Probing)\n";
+    cout << "Enter choice: ";
+    cin >> choice;
+
+    int n;
+    cout << "\nEnter number of users: ";
+    cin >> n;
+
+    if (choice == 1) {
+        HashTableChaining ht;
+        for (int i = 0; i < n; i++) {
+            string username, password;
+            cout << "\nEnter username: ";
+            cin >> username;
+            cout << "Enter password: ";
+            cin >> password;
+            ht.insert(username, password);
+        }
+        ht.display();
+    } 
+    else if (choice == 2) {
+        HashTableOpenAddressing ht;
+        for (int i = 0; i < n; i++) {
+            string username, password;
+            cout << "\nEnter username: ";
+            cin >> username;
+            cout << "Enter password: ";
+            cin >> password;
+            ht.insert(username, password);
+        }
+        ht.display();
+    } 
+    else {
+        cout << "Invalid choice!";
+    }
+
+    return 0;
+}

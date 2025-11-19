@@ -1,0 +1,187 @@
+
+Assignment 3
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+struct Student {
+int rollNo;
+string name;
+float sgpa;
+};
+
+// Function to display student details
+void display(Student s[], int n) {
+cout << "\nRollNo\tName\tSGPA\n";
+for (int i = 0; i < n; i++) {
+cout << s[i].rollNo << "\t" << s[i].name << "\t" << s[i].sgpa << endl;
+}
+}
+
+// a. Bubble Sort by Roll Number (Ascending)
+void bubbleSortByRoll(Student s[], int n) {
+for (int i = 0; i < n - 1; i++) {
+for (int j = 0; j < n - i - 1; j++) {
+if (s[j].rollNo > s[j + 1].rollNo) {
+swap(s[j], s[j + 1]);
+}
+}
+}
+}
+
+// b. Insertion Sort by Name (Alphabetical)
+void insertionSortByName(Student s[], int n) {
+for (int i = 1; i < n; i++) {
+Student current = s[i];
+int j = i - 1;
+while (j >= 0 && s[j].name > current.name) {
+s[j + 1] = s[j];
+j--;
+}
+s[j + 1] = current;
+}
+}
+
+// c. Quick Sort by SGPA (Descending)
+int partition(Student s[], int low, int high) {
+float pivot = s[high].sgpa;
+int i = low - 1;
+for (int j = low; j < high; j++) {
+if (s[j].sgpa > pivot) { // Descending order
+i++;
+swap(s[i], s[j]);
+}
+}
+swap(s[i + 1], s[high]);
+return i + 1;
+}
+
+void quickSortBySGPA(Student s[], int low, int high) {
+if (low < high) {
+int pi = partition(s, low, high);
+quickSortBySGPA(s, low, pi - 1);
+quickSortBySGPA(s, pi + 1, high);
+}
+}
+
+// d. Linear Search by SGPA
+int searchBySGPA(Student s[], int n, float key) {
+for (int i = 0; i < n; i++) {
+if (s[i].sgpa == key) {
+return i;
+}
+}
+return -1;
+}
+
+// e. Binary Search by Name
+int binarySearchByName(Student s[], int n, string key) {
+int low = 0, high = n - 1;
+
+while (low <= high) {
+int mid = (low + high) / 2;
+string element = s[mid].name;
+
+if (element == key) {
+return mid;
+} else if (element < key) {
+low = mid + 1;
+} else {
+high = mid - 1;
+}
+}
+return -1;
+}
+
+int main() {
+int n;
+cout << "Enter number of students: ";
+cin >> n;
+
+Student s[n];
+
+cout << "\nEnter student details:\n";
+for (int i = 0; i < n; i++) {
+cout << "\nStudent " << i + 1 << ":\n";
+cout << "Roll No: ";
+cin >> s[i].rollNo;
+cout << "Name: ";
+cin >> s[i].name;
+cout << "SGPA: ";
+cin >> s[i].sgpa;
+}
+
+int choice;
+do {
+cout << "\n========== MENU ==========";
+cout << "\n1. Display All Students";
+cout << "\n2. Sort by Roll Number (Bubble Sort)";
+cout << "\n3. Sort by Name (Insertion Sort)";
+cout << "\n4. Sort by SGPA (Quick Sort - Topper List)";
+cout << "\n5. Search by SGPA (Linear Search)";
+cout << "\n6. Search by Name (Binary Search)";
+cout << "\n0. Exit";
+cout << "\nEnter your choice: ";
+cin >> choice;
+
+switch (choice) {
+case 1:
+display(s, n);
+break;
+case 2:
+bubbleSortByRoll(s, n);
+cout << "\nSorted by Roll Number:";
+display(s, n);
+break;
+case 3:
+insertionSortByName(s, n);
+cout << "\nSorted Alphabetically by Name:";
+display(s, n);
+break;
+case 4:
+quickSortBySGPA(s, 0, n - 1);
+cout << "\nTop Students by SGPA (Descending):";
+display(s, n);
+break;
+case 5: {
+float sgpaKey;
+cout << "Enter SGPA to search: ";
+cin >> sgpaKey;
+
+int index = searchBySGPA(s, n, sgpaKey);
+if (index != -1) {
+cout << "\nStudent found:\n";
+cout << s[index].rollNo << "\t" << s[index].name << "\t" << s[index].sgpa << endl;
+} else {
+cout << "\nNo student found with SGPA " << sgpaKey << endl;
+}
+break;
+}
+case 6: {
+string nameKey;
+cout << "Enter exact name to search: ";
+cin >> nameKey;
+
+insertionSortByName(s, n); // Binary search requires sorted array
+int index = binarySearchByName(s, n, nameKey);
+
+if (index != -1) {
+cout << "\nStudent found:\n";
+cout << s[index].rollNo << "\t" << s[index].name << "\t" << s[index].sgpa << endl;
+} else {
+cout << "\nNo student found with name " << nameKey << endl;
+}
+break;
+}
+case 0:
+cout << "\nExiting program...\n";
+break;
+default:
+cout << "\nInvalid choice! Try again.\n";
+}
+} while (choice != 0);
+
+return 0;
+}
+

@@ -1,0 +1,278 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+// Contact Node Class
+class Contact {
+public:
+    string name;
+    string number;
+    Contact* next;
+
+    Contact(string n, string num) {
+        name = n;
+        number = num;
+        next = NULL;
+    }
+};
+
+// Contact List Class
+class ContactList {
+private:
+    Contact* head;
+
+public:
+    ContactList() {
+        head = NULL;
+    }
+
+    // ➤ 1) Insert at Beginning
+    void insertAtBeginning(string name, string number) {
+        Contact* newNode = new Contact(name, number);
+        newNode->next = head;
+        head = newNode;
+        cout << "Contact Added at Beginning!\n";
+    }
+
+    // ➤ 2) Insert at End
+    void insertAtEnd(string name, string number) {
+        Contact* newNode = new Contact(name, number);
+        if (head == NULL) {
+            head = newNode;
+            cout << "Contact Added at End (List was Empty)!\n";
+            return;
+        }
+        Contact* temp = head;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = newNode;
+        cout << "Contact Added at End!\n";
+    }
+
+    // ➤ 3) Insert at Specific Position
+    void insertAtPosition(string name, string number, int pos) {
+        if (pos == 1) {
+            insertAtBeginning(name, number);
+            return;
+        }
+
+        Contact* newNode = new Contact(name, number);
+        Contact* temp = head;
+
+        for (int i = 1; i < pos - 1; i++) {
+            if (temp == NULL) {
+                cout << "Position out of range!\n";
+                return;
+            }
+            temp = temp->next;
+        }
+
+        if (temp == NULL) {
+            cout << "Position out of range!\n";
+            return;
+        }
+
+        newNode->next = temp->next;
+        temp->next = newNode;
+        cout << "Contact Added at Position " << pos << "!\n";
+    }
+
+    // ➤ 4) Delete at Beginning
+    void deleteAtBeginning() {
+        if (head == NULL) {
+            cout << "List is Empty!\n";
+            return;
+        }
+        Contact* temp = head;
+        head = head->next;
+        delete temp;
+        cout << "Contact Deleted from Beginning!\n";
+    }
+
+    // ➤ 5) Delete at End
+    void deleteAtEnd() {
+        if (head == NULL) {
+            cout << "List is Empty!\n";
+            return;
+        }
+        if (head->next == NULL) {
+            delete head;
+            head = NULL;
+            cout << "Only Contact Deleted, List is now Empty!\n";
+            return;
+        }
+        Contact* temp = head;
+        while (temp->next->next != NULL) {
+            temp = temp->next;
+        }
+        delete temp->next;
+        temp->next = NULL;
+        cout << "Contact Deleted from End!\n";
+    }
+
+    // ➤ 6) Delete at Specific Position
+    void deleteAtPosition(int pos) {
+        if (head == NULL) {
+            cout << "List is Empty!\n";
+            return;
+        }
+        if (pos == 1) {
+            deleteAtBeginning();
+            return;
+        }
+
+        Contact* temp = head;
+        for (int i = 1; i < pos - 1; i++) {
+            if (temp == NULL || temp->next == NULL) {
+                cout << "Position out of range!\n";
+                return;
+            }
+            temp = temp->next;
+        }
+
+        Contact* toDelete = temp->next;
+        if (toDelete == NULL) {
+            cout << "Position out of range!\n";
+            return;
+        }
+
+        temp->next = toDelete->next;
+        delete toDelete;
+        cout << "Contact Deleted from Position " << pos << "!\n";
+    }
+
+    // ➤ 7) Display Contacts
+    void displayContacts() {
+        if (head == NULL) {
+            cout << "Contact List is Empty!\n";
+            return;
+        }
+        Contact* temp = head;
+        cout << "\n--- Contact List ---\n";
+        while (temp != NULL) {
+            cout << "Name: " << temp->name 
+                 << " | Number: " << temp->number << endl;
+            temp = temp->next;
+        }
+    }
+
+    // ➤ 8) Search by Name
+    void searchByName(string searchName) {
+        Contact* temp = head;
+        bool found = false;
+
+        while (temp != NULL) {
+            if (temp->name == searchName) {
+                cout << "Found Contact → Name: " << temp->name
+                     << ", Number: " << temp->number << endl;
+                found = true;
+            }
+            temp = temp->next;
+        }
+
+        if (!found)
+            cout << "No Contact Found with Name: " << searchName << endl;
+    }
+
+    // ➤ 9) Search by Number
+    void searchByNumber(string searchNumber) {
+        Contact* temp = head;
+        bool found = false;
+
+        while (temp != NULL) {
+            if (temp->number == searchNumber) {
+                cout << "Found Contact → Name: " << temp->name
+                     << ", Number: " << temp->number << endl;
+                found = true;
+            }
+            temp = temp->next;
+        }
+
+        if (!found)
+            cout << "No Contact Found with Number: " << searchNumber << endl;
+    }
+};
+
+// ➤ Main Function
+int main() {
+    ContactList list;
+    int choice, pos;
+    string name, number;
+
+    do {
+        cout << "\n--- Contact Management System ---\n";
+        cout << "1. Insert at Beginning\n";
+        cout << "2. Insert at End\n";
+        cout << "3. Insert at Position\n";
+        cout << "4. Delete at Beginning\n";
+        cout << "5. Delete at End\n";
+        cout << "6. Delete at Position\n";
+        cout << "7. Display Contacts\n";
+        cout << "8. Search by Name\n";
+        cout << "9. Search by Number\n";
+        cout << "10. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+        case 1:
+            cout << "Enter Name: "; cin >> name;
+            cout << "Enter Number: "; cin >> number;
+            list.insertAtBeginning(name, number);
+            break;
+
+        case 2:
+            cout << "Enter Name: "; cin >> name;
+            cout << "Enter Number: "; cin >> number;
+            list.insertAtEnd(name, number);
+            break;
+
+        case 3:
+            cout << "Enter Name: "; cin >> name;
+            cout << "Enter Number: "; cin >> number;
+            cout << "Enter Position: "; cin >> pos;
+            list.insertAtPosition(name, number, pos);
+            break;
+
+        case 4:
+            list.deleteAtBeginning();
+            break;
+
+        case 5:
+            list.deleteAtEnd();
+            break;
+
+        case 6:
+            cout << "Enter Position to Delete: ";
+            cin >> pos;
+            list.deleteAtPosition(pos);
+            break;
+
+        case 7:
+            list.displayContacts();
+            break;
+
+        case 8:
+            cout << "Enter Name to Search: ";
+            cin >> name;
+            list.searchByName(name);
+            break;
+
+        case 9:
+            cout << "Enter Number to Search: ";
+            cin >> number;
+            list.searchByNumber(number);
+            break;
+
+        case 10:
+            cout << "Exiting Program...\n";
+            break;
+
+        default:
+            cout << "Invalid Choice! Try again.\n";
+        }
+    } while (choice != 10);
+
+    return 0;
+}

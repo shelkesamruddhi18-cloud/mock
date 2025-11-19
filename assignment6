@@ -162,3 +162,65 @@ int main() {
 
     return 0;
 }
+
+
+
+/*
+
+//Quadratic probing
+#include <iostream>
+using namespace std;
+
+#define SIZE 10
+
+class HashTable {
+    string arr[SIZE];
+
+public:
+    HashTable() {
+        for(int i=0;i<SIZE;i++) arr[i]="-";
+    }
+
+    int hashFunc(string key) {
+        int sum=0;
+        for(char c:key) sum+=c;
+        return sum % SIZE;
+    }
+
+    void insertQ(string key) {
+        int index = hashFunc(key);
+        int i = 1;
+
+        while(arr[index] != "-") {
+            index = (index + i*i) % SIZE;
+            i++;
+        }
+        arr[index] = key;
+    }
+
+    void display() {
+        for(int i=0;i<SIZE;i++) {
+            cout<<i<<" -> "<<arr[i]<<endl;
+        }
+    }
+};
+
+int main() {
+    HashTable h;
+    int n;
+    cout<<"how many values: ";
+    cin>>n;
+
+    for(int i=0;i<n;i++){
+        string x;
+        cout<<"enter key: ";
+        cin>>x;
+        h.insertQ(x);
+    }
+
+    cout<<"\nHash Table:\n";
+    h.display();
+
+    return 0;
+}
+*/

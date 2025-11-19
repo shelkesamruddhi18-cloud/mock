@@ -1,0 +1,103 @@
+#include <iostream>
+#include <stack>
+#include <algorithm>
+#include <string>
+using namespace std;
+
+int precedence(char op) {
+    if(op == '+' || op == '-') return 1;
+    if(op == '*' || op == '/') return 2;
+    return 0;
+}
+
+string infixToPostfix(string infix) {
+    stack<char> s;
+    string postfix = "";
+
+    for(int i = 0; i < infix.length(); i++) {
+        char ch = infix[i];
+
+        if(isalpha(ch)) {
+            postfix += ch;
+        } 
+        else if(ch == '(') {
+            s.push(ch);
+        } 
+        else if(ch == ')') {
+            while(!s.empty() && s.top() != '(') {
+                postfix += s.top();
+                s.pop();
+            }
+            s.pop();
+        } 
+        else {
+            while(!s.empty() && precedence(s.top()) >= precedence(ch)) {
+                postfix += s.top();
+                s.pop();
+            }
+            s.push(ch);
+        }
+    }
+
+    while(!s.empty()) {
+        postfix += s.top();
+        s.pop();
+    }
+
+    return postfix;
+}
+
+string infixToPrefix(string infix) {
+    reverse(infix.begin(), infix.end());
+
+    for(int i = 0; i < infix.length(); i++) {
+        if(infix[i] == '(') infix[i] = ')';
+        else if(infix[i] == ')') infix[i] = '(';
+    }
+
+    string postfix = infixToPostfix(infix);
+    reverse(postfix.begin(), postfix.end());
+    return postfix;
+}
+
+void postfixEval(string I){
+    stack<float> evalans;
+    for(int i=0; i<I.length(); i++){
+        char ch = I[i];
+        if(ch =='+' || ch=='-'|| ch=='*'|| ch =='/'){
+            float a = evalans.top(); evalans.pop();
+            float b = evalans.top(); evalans.pop();
+            float c;
+            switch(ch){
+                case '+': c = b + a; break;
+                case '-': c = b - a; break;
+                case '*': c = b * a; break;
+                case '/': c = b / a; break;
+            }
+            evalans.push(c);
+        }
+        else{
+            float value;
+            cout<<"enter the value "<<ch<<" = ";
+            cin>>value;
+            evalans.push(value);
+        }
+    }
+    cout<<"Postfix eval ans: "<<evalans.top()<<endl;
+}
+
+int main(){
+    string exp;
+    cout<<"enter infix expression: ";
+    cin>>exp;
+
+    string postfixExp = infixToPostfix(exp);
+    cout<<"Postfix expression: "<<postfixExp<<endl;
+
+    string prefixExp = infixToPrefix(exp);
+    cout<<"Prefix expression: "<<prefixExp<<endl;
+
+    postfixEval(postfixExp);
+
+    return 0;
+}

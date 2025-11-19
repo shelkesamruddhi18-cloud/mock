@@ -1,0 +1,210 @@
+
+Assignment 2
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Node {
+public:
+string data;
+Node* next;
+
+Node(string val) {
+data = val;
+next = nullptr;
+}
+};
+
+
+class Stack {
+private:
+Node* top;
+
+void printStack() {
+Node* temp = top;
+cout << "Stack: ";
+if (temp == nullptr) {
+cout << "*empty*";
+}
+while (temp != nullptr) {
+cout << temp->data;
+temp = temp->next;
+if (temp != nullptr) cout << " → ";
+}
+cout << endl << endl;
+}
+
+public:
+Stack() {
+top = nullptr;
+}
+
+void push(string value) {
+Node* newNode = new Node(value);
+newNode->next = top;
+top = newNode;
+cout << "Action Saved: " << value << " (Undo available)" << endl;
+printStack();
+}
+string pop() {
+if (top == nullptr) {
+cout << "No actions to undo!" << endl;
+printStack();
+return "";
+}
+Node* temp = top;
+string value = temp->data;
+top = top->next;
+delete temp;
+cout << "Undo Performed → Removed action: " << value << endl;
+printStack();
+return value;
+}
+
+string peek() {
+if (top == nullptr) {
+cout << "No actions performed yet." << endl;
+printStack();
+return "";
+}
+cout << "Last Action: " << top->data << endl;
+printStack();
+return top->data;
+}
+
+bool isEmpty() {
+return top == nullptr;
+}
+};
+
+class Queue {
+private:
+Node* front;
+Node* rear;
+
+void printQueue() {
+Node* temp = front;
+cout << "Queue: ";
+if (temp == nullptr) {
+cout << "*empty*";
+}
+while (temp != nullptr) {
+cout << temp->data;
+temp = temp->next;
+if (temp != nullptr) cout << " → ";
+}
+cout << endl << endl;
+}
+
+public:
+Queue() {
+front = rear = nullptr;
+}
+
+void enqueue(string value) {
+Node* newNode = new Node(value);
+if (rear == nullptr) {
+front = rear = newNode;
+} else {
+rear->next = newNode;
+rear = newNode;
+}
+cout << "Task Added to Queue: " << value << endl;
+printQueue();
+}
+
+string dequeue() {
+if (front == nullptr) {
+cout << "No tasks in queue!" << endl;
+printQueue();
+return "";
+}
+Node* temp = front;
+string value = temp->data;
+front = front->next;
+if (front == nullptr) {
+rear = nullptr;
+}
+delete temp;
+cout << "Task Executed and Removed from Queue: " << value << endl;
+printQueue();
+return value;
+}
+
+string peek() {
+if (front == nullptr) {
+cout << "No pending tasks" << endl;
+printQueue();
+return "";
+}
+cout << "Next Task in Queue: " << front->data << endl;
+printQueue();
+return front->data;
+}
+
+bool isEmpty() {
+return front == nullptr;
+}
+};
+
+int main() {
+Queue taskQueue; // for task scheduling
+Stack actionStack; // for undo/redo
+
+int choice;
+string input;
+
+do {
+cout << "1. Add Task to Queue" << endl;
+cout << "2. Execute Task (Dequeue)" << endl;
+cout << "3. display Next Task (Peek)" << endl;
+cout << "4. Perform Action (Save in Stack)" << endl;
+cout << "5. Undo Last Action (Pop Stack)" << endl;
+cout << "6. display Last Action (Peek)" << endl;
+cout << "7. Exit" << endl;
+cout << "Enter choice: ";
+cin >> choice;
+cin.ignore(); 
+switch (choice) {
+case 1:
+cout << "Enter task1: ";
+getline(cin, input);
+taskQueue.enqueue(input);
+break;
+
+case 2:
+taskQueue.dequeue();
+break;
+
+case 3:
+taskQueue.peek();
+break;
+
+case 4:
+cout << "Enter action performed: ";
+getline(cin, input);
+actionStack.push(input);
+break;
+
+case 5:
+actionStack.pop();
+break;
+
+case 6:
+actionStack.peek();
+break;
+
+case 7:
+cout << "Exit" << endl;
+break;
+
+default:
+cout << "Invalid choice!" << endl;
+}
+
+} while (choice != 7);
+
+return 0;
+}
+
